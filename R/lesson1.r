@@ -74,6 +74,33 @@ lesson1.3 = function() {
   predictdf
 }
 
+
+lesson1.4 = function() {
+## handwritten
+}
+
+lesson1.5 = function(x) {
+  # icept = 186.5
+  # slope = -1.750
+  # y = icept + slope*1.189
+  # y
+  #
+  ## Olympic time
+  men = 10.386 + (-0.038)*x
+  women = 11.606 + (-0.063)*x
+  menlog = 2.341 - 0.0038*x
+  womenlog = 2.452 - 0.0056*x
+
+  answerdf = data.frame("men" = men,
+                        "menlog" = menlog,
+                        "women" = women,
+                        "womenlog" = womenlog)
+  answerdf
+}
+
 # lesson1.1()
 # lesson1.2()
-lesson1.3()
+# lesson1.3()
+# lesson1.4()
+lesson1.5(16) # 2008 Olympics
+lesson1.5(17) # 2012 Olympics
