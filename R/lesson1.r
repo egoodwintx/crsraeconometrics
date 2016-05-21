@@ -16,22 +16,23 @@ require(gridExtra)
 
 
 lesson1 = function() {
-  uri="data/Dataset1.txt"
-  salesdat = read.csv(uri, header=TRUE, sep='\t')
+  uri = "data/Dataset1.txt"
+  salesdat = read.csv(uri, header = TRUE, sep = '\t')
   summary(salesdat)
   str(salesdat)
 }
 
 lesson1.1 = function() {
-  uri="data/TrainExer11.txt"
-  survdat = read.csv(uri, header=TRUE, sep='\t')
+  uri = "data/TrainExer11.txt"
+  survdat = read.csv(uri, header = TRUE, sep = '\t')
   p = ggplot(survdat, aes(Age)) + geom_histogram() + ggtitle("Age")
   p2 = ggplot(survdat, aes(Expenditures)) + geom_histogram() + ggtitle("Expend")
   p3 = ggplot(survdat, aes(Age, Expenditures)) + geom_point() + ggtitle("Age vs. Expend")
-  grid.arrange(p, p2, p3, nrow=2, ncol=2)
+  grid.arrange(p, p2, p3, nrow = 2, ncol = 2)
 
   ## sample mean
-  means = c(mean(survdat$Expenditures),
+  means = c(
+    mean(survdat$Expenditures),
     mean(subset(survdat, Age >= 40)$Expenditures),
     mean(subset(survdat, Age < 40)$Expenditures)
   )
@@ -40,9 +41,9 @@ lesson1.1 = function() {
 
 lesson1.2 = function() {
   ## no data file...purely math questions
-  x = 225/150
-  y = 400/250
-  options(digits=4)
+  x = 225 / 150
+  y = 400 / 250
+  options(digits = 4)
   print(x)
   print(y)
 
@@ -50,7 +51,7 @@ lesson1.2 = function() {
 
 lesson1.3 = function() {
   uri = "data/TrainExer13.txt"
-  rundat = read.csv(uri, sep='\t', header=TRUE)
+  rundat = read.csv(uri, sep = '\t', header = TRUE)
   rundat
 
 
@@ -64,8 +65,8 @@ lesson1.3 = function() {
   # predict 2008, 2012, 2016
   pyears = c(2008, 2012, 2016)
   predictdf = data.frame()
-  for(year in pyears) {
-    p = reg[[1]][1] + year*reg[[1]][2]
+  for (year in pyears) {
+    p = reg[[1]][1] + year * reg[[1]][2]
     adf = data.frame("Year" = year,
                      "Time" = p)
     predictdf = rbind(predictdf, adf)
@@ -76,7 +77,28 @@ lesson1.3 = function() {
 
 
 lesson1.4 = function() {
-## handwritten
+  ## handwritten
+}
+
+# helper function for 1.5, rtype can be
+# "men", "menlog", "women", "womenlog"
+racetime = function(x, rtype = "men") {
+  if (rtype == "men") {
+    men = 10.386 + (-0.038) * x
+    return(men)
+  }
+  else if (rtype == "women") {
+    women = 11.606 + (-0.063) * x
+    return(women)
+  }
+  else if (rtype == "menlog") {
+    menlog = 2.341 - 0.0038 * x
+    return(menlog)
+  }
+  else if (rtype == "womenlog") {
+    womenlog = 2.452 - 0.0056 * x
+    return(womenlog)
+  }
 }
 
 lesson1.5 = function(x) {
@@ -86,16 +108,24 @@ lesson1.5 = function(x) {
   # y
   #
   ## Olympic time
-  men = 10.386 + (-0.038)*x
-  women = 11.606 + (-0.063)*x
-  menlog = 2.341 - 0.0038*x
-  womenlog = 2.452 - 0.0056*x
+  men = racetime(x, rtype = "men")
+  women = racetime(x, rtype = "women")
+  menlog = racetime(x, rtype = "menlog")
+  womenlog = racetime(x, rtype = "men")
 
-  answerdf = data.frame("men" = men,
-                        "menlog" = menlog,
-                        "women" = women,
-                        "womenlog" = womenlog)
+  answerdf = data.frame(
+    "men" = men,
+    "menlog" = menlog,
+    "women" = women,
+    "womenlog" = womenlog
+  )
   answerdf
+}
+
+lesson1.5.2 = function() {
+  uri = "data/TrainExer15.txt"
+
+
 }
 
 # lesson1.1()
@@ -104,3 +134,14 @@ lesson1.5 = function(x) {
 # lesson1.4()
 lesson1.5(16) # 2008 Olympics
 lesson1.5(17) # 2012 Olympics
+
+xvec = c(1:100)
+sapply(xvec, racetime, rtype="men") #equal in 2140 [i=49]
+sapply(xvec, racetime, rtype="women")
+
+sapply(xvec, racetime, rtype="menlog") #equal in 2192
+sapply(xvec, racetime, rtype="womenlog")
+
+racetime(49, rtype="men")
+
+
