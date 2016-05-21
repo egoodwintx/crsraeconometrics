@@ -38,4 +38,42 @@ lesson1.1 = function() {
   means
 }
 
-lesson1.1()
+lesson1.2 = function() {
+  ## no data file...purely math questions
+  x = 225/150
+  y = 400/250
+  options(digits=4)
+  print(x)
+  print(y)
+
+}
+
+lesson1.3 = function() {
+  uri = "data/TrainExer13.txt"
+  rundat = read.csv(uri, sep='\t', header=TRUE)
+  rundat
+
+
+  reg = lm(rundat$Winning.time.men ~ rundat$Year)
+  summary(reg)
+
+  p = ggplot(rundat, aes(Year, Winning.time.men)) + geom_point() +
+    geom_abline(intercept = reg[[1]][1], slope = reg[[1]][2])
+  p
+
+  # predict 2008, 2012, 2016
+  pyears = c(2008, 2012, 2016)
+  predictdf = data.frame()
+  for(year in pyears) {
+    p = reg[[1]][1] + year*reg[[1]][2]
+    adf = data.frame("Year" = year,
+                     "Time" = p)
+    predictdf = rbind(predictdf, adf)
+
+  }
+  predictdf
+}
+
+# lesson1.1()
+# lesson1.2()
+lesson1.3()
