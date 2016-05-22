@@ -1,0 +1,99 @@
+---
+title: "Test Exercise 1"
+author: "Ed Goodwin"
+date: "May 21, 2016"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+[Coursera Econometrics Course](https://www.coursera.org/learn/erasmus-econometrics)
+
+## Questions
+
+_This exercise considers an example of data that do not satisfy all the standard assumptions of simple regression._
+
+_In the considered case, one particular observation lies far off from the others, that is, it is an outlier. This violates assumptions A3 and A4, which state that all error terms are drawn from one and the same distribution with mean zero and fixed variance. The dataset contains twenty weekly observations on sales and advertising of a department store. The question of interest lies in estimating the effect of advertising on sales. One of the weeks was special, as the store was also open in the evenings during this week, but this aspect will first be ignored in the analysis._
+
+_Make the scatter diagram with sales on the vertical axis and advertising on the horizontal axis._ 
+
+```{r plot, echo=FALSE, warning=FALSE, message=FALSE}
+require(ggplot2)
+
+uri = "https://d396qusza40orc.cloudfront.net/eureconometrics-assets/Dataset%20Files%20for%20On-Demand%20Course/Exercises%20and%20datasets/Module%201/TestExer1-sales-round1.txt"
+tsalesdat = read.csv(uri, sep = '\t', header = TRUE)
+names(tsalesdat) = c("Observ", "Advert", "Sales")
+
+p = ggplot(tsalesdat, aes(Advert, Sales)) +
+geom_point() +
+ggtitle("Sales vs Advertising Spend")
+p
+```
+
+_What do you expect to find if you would fit a regression line to these data?_
+  
+> The regression line would be misleading because of the outlier in Observation 12.
+
+```{r plotline, echo=FALSE, warning=FALSE, message=FALSE}
+regmodel = lm(tsalesdat$Sales ~ tsalesdat$Observ)
+summary(regmodel)
+p = p + 
+  ggtitle("Sales vs Ad Spend (incl outliers)") +
+  geom_abline(intercept=26.52105, slope=-0.02105)
+p
+```
+
+_Estimate the coefficients a and b in the simple regression model with sales as dependent variable and advertising as explanatory factor. Also compute the standard error and t-value of b. Is b significantly different from 0?_
+
+Variable    | Value
+------------|-------
+Coefficients| a = 26.5211, b = -0.0211
+Std error   | b = 0.2294
+t-value     | -0.09, not statistically significant from 0
+
+_Compute the residuals and draw a histogram of these residuals. What conclusion do you draw from this histogram?_
+
+```{r residuals, echo=TRUE, warning=FALSE, message=FALSE}
+residmodel = data.frame("resid" = resid(regmodel))
+p = ggplot(residmodel, aes(resid)) + 
+  geom_histogram(binwidth = 1) +
+  ggtitle("Histogram of Residuals (bin=1)")
+p
+summary(residmodel)
+```
+> Linear regression is not a good fit...residuals are not normally distributed, possibly due to the outlier data point.
+
+_Apparently, the regression result of part (b) is not satisfactory. Once you realize that the large residual corresponds to the week with opening hours during the evening, how would you proceed to get a more satisfactory regression model?_
+
+> You could remove the outlier to get cleaner data. This is acceptable because the data represents a point that was not operating under the same model as the other data points (open in the evenings)
+
+
+_Delete this special week from the sample and use the remaining 19 weeks to estimate the coefficients a and b in the simple regression model with sales as dependent variable and advertising as explanatory factor. Also compute the standard error and t-value of b. Is b significantly different from 0?_
+
+```{r cleandat, echo=FALSE, message=FALSE, warning=FALSE}
+## remove outlier
+tsalesdatclean = tsalesdat[-12,]
+resmodelclean = lm(tsalesdatclean$Sales ~ tsalesdatclean$Observ)
+summary(resmodelclean)
+
+```
+
+Variable    | Value
+------------|-------
+Coefficients| a = 25.86, b = -0.0776
+Std error   | b = 0.0557
+t-value     | -1.39, not statistically significant from 0
+
+
+_Discuss the differences between your findings in parts (b) and (e). Describe in words what you have learned from these results._
+
+```{r cleananalysis, echo=FALSE, message=FALSE, warning=FALSE}
+par(mfrow=c(2,1))
+plot(resid(resmodelclean), main="Residuals of Sales Regression (excl outliers)")
+hist(resid(resmodelclean), main="Histogram of Sales Regression (excl outliers")
+```
+
+> Removing the outlier data point significantly reduced the standard error, but the model is still not very descriptive. This is probably due to the fact that there are other external factors that are influencing sales.
