@@ -3,8 +3,8 @@ title: "Test Exercise 1"
 author: "Ed Goodwin"
 date: "May 21, 2016"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -22,6 +22,7 @@ _Make the scatter diagram with sales on the vertical axis and advertising on the
 
 ```{r plot, echo=FALSE, warning=FALSE, message=FALSE}
 require(ggplot2)
+require(stargazer)
 
 uri = "https://d396qusza40orc.cloudfront.net/eureconometrics-assets/Dataset%20Files%20for%20On-Demand%20Course/Exercises%20and%20datasets/Module%201/TestExer1-sales-round1.txt"
 tsalesdat = read.csv(uri, sep = '\t', header = TRUE)
@@ -38,7 +39,7 @@ _What do you expect to find if you would fit a regression line to these data?_
 > The regression line would be misleading because of the outlier in Observation 12.
 
 ```{r plotline, echo=FALSE, warning=FALSE, message=FALSE}
-regmodel = lm(tsalesdat$Sales ~ tsalesdat$Observ)
+regmodel = lm(tsalesdat$Sales ~ tsalesdat$Advert)
 summary(regmodel)
 p = p + 
   ggtitle("Sales vs Ad Spend (incl outliers)") +
@@ -76,18 +77,14 @@ _Delete this special week from the sample and use the remaining 19 weeks to esti
 ```{r cleandat, echo=FALSE, message=FALSE, warning=FALSE}
 ## remove outlier
 tsalesdatclean = tsalesdat[-12,]
-resmodelclean = lm(tsalesdatclean$Sales ~ tsalesdatclean$Observ)
+resmodelclean = lm(tsalesdatclean$Sales ~ tsalesdatclean$Advert)
 summary(resmodelclean)
 
 ```
 
-Variable    | Value
-------------|-------
-Coefficients| a = 25.86, b = -0.0776
-Std error   | b = 0.0557
-t-value     | -1.39, not statistically significant from 0
-
-
+```{r cleandat2, echo=FALSE, results='asis'}
+stargazer(resmodelclean, type='html')
+```
 _Discuss the differences between your findings in parts (b) and (e). Describe in words what you have learned from these results._
 
 ```{r cleananalysis, echo=FALSE, message=FALSE, warning=FALSE}

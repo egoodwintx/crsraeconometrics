@@ -12,6 +12,7 @@
 ## version: 0.01
 ## changelog:
 ##
+library(ggplot2)
 
 uri = "data/TestExer1-sales-round1.txt"
 tsalesdat = read.csv(uri, sep='\t', header=TRUE)
@@ -59,7 +60,7 @@ summary(residmodel)
 
 ## remove outlier
 tsalesdatclean = tsalesdat[-12,]
-resmodelclean = lm(tsalesdatclean$Sales ~ tsalesdatclean$Observ)
+resmodelclean = lm(tsalesdatclean$Sales ~ tsalesdatclean$Sales)
 summary(resmodelclean)
 ## Coefficients: a = 25.86, b = -0.0776
 ## Std error b = 0.0557
